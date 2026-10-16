@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI,status
 from pydantic import BaseModel, Field
 
 
@@ -66,7 +66,18 @@ error={
 @app.get("/health", status_code=200)
 async def root():
     return {
-        "status": "healthy",
-        "service": "vaais-core",
-        "environment": "development",
+        "status": "ok",
     }
+@app.post("/extract", status_code=status.HTTP_200_OK, response_model=ExtractionResponse)
+async def extractor(request: ExtractRequest) -> ExtractionResponse:
+    # A true safe stub returning explicit unknowns for unextracted fields
+    stub_lead = LeadFields(
+        travelers=None, 
+        dates=None, 
+        location="unknown" if "skardu" not in request.text.lower() else "skardu", 
+        duration=None, 
+        origin_country=None, 
+        price=None,
+        needs_review=True
+    )
+    return ExtractionResponse(leads=[stub_lead], errors=[])

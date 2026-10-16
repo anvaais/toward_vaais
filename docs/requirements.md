@@ -27,7 +27,8 @@ Each extracted lead contains the following nullable fields:
 - `dates`: A precise date when one can be established reliably; otherwise
   `null`.
 - `location`: Destination or travel location.
-- `duration`: Positive integer duration, such as a number of days.
+- `duration`: Positive integer duration measured in days. A night count must
+  not be copied into this field without converting it to days.
 - `origin_country`: Traveler's country of origin.
 - `price`: Positive numeric price when explicitly provided.
 - `needs_review`: Boolean indicating whether human review is needed.
@@ -55,6 +56,10 @@ This system will not:
   not become an arbitrary day in June.
 - Only populate constrained numeric fields when the value is explicitly
   supported and greater than zero.
+- When dates and an explicitly stated duration contradict each other, set both
+  `dates` and `duration` to `null` because neither schedule interpretation is
+  reliable, and set `needs_review` to `true`. This is the policy represented
+  by `case_008` in the fixture.
 - Return structured validation errors using the standard FastAPI/Pydantic error
   shape.
 
