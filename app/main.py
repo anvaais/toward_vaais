@@ -23,45 +23,45 @@ class LeadFields(BaseModel):
     duration: Optional[int] = Field(default=None, gt=0)
     origin_country: Optional[str] = None
     price: Optional[float] = Field(default=None, gt=0)
-    needs_review: Optional[bool] = None
+    needs_review: Optional[bool] = True
 
 
 class ExtractionResponse(BaseModel):
     leads: list[LeadFields]
     errors: list[str] = Field(default_factory=list)
 
-error={
-  "detail": [
-    {
-      "type": "greater_than",
-      "loc": [
-        "body",
-        "leads",
-        0,
-        "travelers"
-      ],
-      "msg": "Input should be greater than 0",
-      "input": 0,
-      "ctx": {
-        "gt": 0
-      }
-    },
-    {
-      "type": "greater_than",
-      "loc": [
-        "body",
-        "leads",
-        0,
-        "price"
-      ],
-      "msg": "Input should be greater than 0",
-      "input": -25,
-      "ctx": {
-        "gt": 0
-      }
-    }
-  ]
-}
+# error={
+#   "detail": [
+#     {
+#       "type": "greater_than",
+#       "loc": [
+#         "body",
+#         "leads",
+#         0,
+#         "travelers"
+#       ],
+#       "msg": "Input should be greater than 0",
+#       "input": 0,
+#       "ctx": {
+#         "gt": 0
+#       }
+#     },
+#     {
+#       "type": "greater_than",
+#       "loc": [
+#         "body",
+#         "leads",
+#         0,
+#         "price"
+#       ],
+#       "msg": "Input should be greater than 0",
+#       "input": -25,
+#       "ctx": {
+#         "gt": 0
+#       }
+#     }
+#   ]
+# }
 
 @app.get("/health", status_code=200)
 async def root():
@@ -74,7 +74,7 @@ async def extractor(request: ExtractRequest) -> ExtractionResponse:
     stub_lead = LeadFields(
         travelers=None, 
         dates=None, 
-        location="unknown" if "skardu" not in request.text.lower() else "skardu", 
+        location=None ,
         duration=None, 
         origin_country=None, 
         price=None,
