@@ -1,13 +1,22 @@
-from app.schemas import ExtractionResponse
+
+from app.schemas import ExtractionResponse, LeadFields
+
+
 class MockProvider:
 
     def __init__(
         self,
-        fixtures: dict[str, ExtractionResponse],
-        unknown_response: ExtractionResponse
-    ) -> None:
+        fixtures: dict[str, ExtractionResponse]
+    ):
         self.fixtures = fixtures
-        self.unknown_response = unknown_response
 
     def extract(self, raw_text: str) -> ExtractionResponse:
-        return self.fixtures.get(raw_text, self.unknown_response)
+        response = self.fixtures.get(raw_text)
+
+        if response is not None:
+            return response.model_copy(deep=True)
+
+        return ExtractionResponse(
+            leads=[LeadFields(needs_review=True)],
+            errors=[]
+        )

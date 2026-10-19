@@ -3,7 +3,14 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
-from app.main import app, ExtractRequest, LeadFields
+# from app.main import app, ExtractRequest, LeadFields
+# from app.main import ExtractRequest, LeadFields,app
+from app.main import app
+from app.schemas import (
+    ExtractRequest,
+    LeadFields,
+    ExtractionResponse
+)
 
 client = TestClient(app)
 
@@ -32,20 +39,32 @@ def test_single_fixture_round_trip(case_id, raw_line):
     assert revalidated.id == case_id
 
 @pytest.mark.parametrize("case_id, raw_line", load_fixtures())
-def test_extractor_mismatches(case_id, raw_line):
+def test_extractor_stub(case_id, raw_line):
     case = FixtureCase.model_validate_json(raw_line)
-    response = client.post("/extract", json=case.input.model_dump())
+
+    response = client.post(
+        "/extract",
+        json=case.input.model_dump()
+    )
+
     assert response.status_code == 200
 
-    expected_dict = case.expected.model_dump()
-    actual_dict = response.json()
-    
+    result = ExtractionResponse.model_validate(
+        response.json()
+    )
 
-    mismatches = []
-    for key, expected_val in expected_dict.items():
-        actual_val = actual_dict.get(key)
-        if expected_val != actual_val:
-            mismatches.append((case_id, key, expected_val, actual_val))
+    assert len(result.leads) == 1
+    assert result.errors == []
 
-    for case_id_val, field, exp, act in mismatches:
-        print(f"MISMATCH [{case_id_val}] {field}: expected={exp!r}, actual={act!r}")
+    lead = result.leads[0]
+    assert lead.needs_review is True
+
+    for field in (
+        "travelers",
+        "dates",
+        "location",
+        "duration",
+        "origin_country",
+        "price"
+    ):
+        assert getattr(lead, field) is None
