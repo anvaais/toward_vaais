@@ -36,7 +36,9 @@ class GeminiProvider:
                 config={
                     "system_instruction": SYSTEM_INSTRUCTION,
                     "response_mime_type": "application/json",
-                    "response_schema": ExtractionResponse,
+                    # Preserve Pydantic constraints without converting to the
+                    # SDK's narrower Schema model (no exclusiveMinimum).
+                    "response_json_schema": ExtractionResponse.model_json_schema(),
                 },
             )
         except Exception:

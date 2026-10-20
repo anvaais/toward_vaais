@@ -24,7 +24,7 @@ def get_provider() -> ExtractionProvider:
             from app.providers.gemini import GeminiProvider
             return GeminiProvider(
                 api_key=os.getenv("GEMINI_API_KEY", ""),
-                model=os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
+                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
             )
         except ImportError:
             raise ValueError("Install the google-genai SDK for gemini mode") from None

@@ -1,4 +1,5 @@
 import os
+import json
 
 import pytest
 from fastapi.testclient import TestClient
@@ -105,6 +106,37 @@ def test_gemini_invalid_output_rejected():
     provider = GeminiProvider("dummy-key", "gemini-3.8-flash", client=BadResultClient())
     with pytest.raises(ProviderOutputError):
         provider.extract("An example travel inquiry")
+
+
+@pytest.mark.parametrize("travelers", [2, 0])
+def test_gemini_real_sdk_schema_and_response_validation(monkeypatch, travelers):
+    """Exercise SDK schema conversion without making an external request."""
+    from google import genai
+    from google.genai import types
+
+    with genai.Client(api_key="dummy-key") as sdk_client:
+        def fake_request(*args, **kwargs):
+            return types.HttpResponse(body=json.dumps({
+                "candidates": [{
+                    "content": {
+                        "role": "model",
+                        "parts": [{"text": json.dumps({
+                            "leads": [{"travelers": travelers}],
+                            "errors": [],
+                        })}],
+                    },
+                    "finishReason": "STOP",
+                }],
+            }))
+
+        monkeypatch.setattr(sdk_client._api_client, "request", fake_request)
+        provider = GeminiProvider("dummy-key", "gemini-2.5-flash", client=sdk_client)
+        if travelers == 0:
+            with pytest.raises(ProviderOutputError):
+                provider.extract("Two travelers would like a holiday")
+        else:
+            result = provider.extract("Two travelers would like a holiday")
+            assert result.leads[0].travelers == travelers
 
 
 def test_no_hidden_fallback_on_provider_failure(monkeypatch):
