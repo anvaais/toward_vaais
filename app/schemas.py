@@ -7,12 +7,14 @@ class ExtractRequest(BaseModel):
 
 class LeadFields(BaseModel):
     travelers: Optional[int] = Field(default=None, gt=0)
+    contact_details: Optional[str] = None
     dates: Optional[date] = None
     location: Optional[str] = None
     duration: Optional[int] = Field(default=None, gt=0)
     origin_country: Optional[str] = None
     price: Optional[float] = Field(default=None, gt=0)
     needs_review: Optional[bool] = True
+
 
 
 class ExtractionResponse(BaseModel):

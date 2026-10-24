@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 def get_provider() -> ExtractionProvider:
     # Environment variables already set by the process take precedence over .env.
     load_dotenv(PROJECT_ROOT / ".env", override=False)
-    mode = os.getenv("PROVIDER_MODE", "mock").strip().lower()
+    mode = os.getenv("PROVIDER_MODE", "gemini").strip().lower()
 
     if mode == "mock":
         return MockProvider(load_mock_fixtures())

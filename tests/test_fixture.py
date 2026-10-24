@@ -39,7 +39,8 @@ def test_single_fixture_round_trip(case_id, raw_line):
     assert revalidated.id == case_id
 
 @pytest.mark.parametrize("case_id, raw_line", load_fixtures())
-def test_extractor_stub(case_id, raw_line):
+def test_extractor_returns_fixture_label(case_id, raw_line, monkeypatch):
+    monkeypatch.setenv("PROVIDER_MODE", "mock")
     case = FixtureCase.model_validate_json(raw_line)
 
     response = client.post(
@@ -55,16 +56,4 @@ def test_extractor_stub(case_id, raw_line):
 
     assert len(result.leads) == 1
     assert result.errors == []
-
-    lead = result.leads[0]
-    assert lead.needs_review is True
-
-    for field in (
-        "travelers",
-        "dates",
-        "location",
-        "duration",
-        "origin_country",
-        "price"
-    ):
-        assert getattr(lead, field) is None
+    assert result.leads[0] == case.expected

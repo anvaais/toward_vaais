@@ -42,7 +42,7 @@ vaais-core/
 ### Project root
 
 - **`README.md`** — Main project introduction and usage documentation. It is
-  currently empty.
+  documents setup, running the API, and running tests.
 - **`pyproject.toml`** — Project metadata, Python version requirement,
   runtime dependencies, development dependencies, build configuration, and
   the `vaais-core` command-line entry point.
@@ -59,8 +59,8 @@ schemas, provider abstractions, and prototype examples.
   empty.
 - **`app/main.py`** — Defines the active FastAPI application, the `GET
   /health` endpoint, and the `POST /extract` endpoint. The extraction
-  endpoint currently returns a safe stub response with unknown fields set to
-  `null`.
+  endpoint delegates to the configured extraction provider and returns
+  fixture-backed results in mock mode.
 - **`app/schemas.py`** — Defines the request and response models used by the
   API:
   `ExtractRequest`, `LeadFields`, and `ExtractionResponse`.
@@ -79,6 +79,12 @@ the API layer.
 - **`app/providers/mock.py`** — Implements `MockProvider`, which returns
   fixture-based responses when an input matches and otherwise returns a
   review-required fallback response.
+- **`app/providers/factory.py`** — Loads provider configuration and selects the
+  mock or Gemini provider.
+- **`app/providers/fixture_loader.py`** — Loads and validates extraction
+  fixtures from `data/fixtures.jsonl`.
+- **`app/providers/gemini.py`** — Calls Gemini for structured extraction and
+  validates the returned data.
 
 ### `data/`
 
@@ -116,8 +122,10 @@ Automated tests for the API, schemas, fixtures, and provider behavior.
 - **`tests/test_extract.py`** — Tests the active health and extraction
   endpoints, including request validation and malformed JSON handling.
 - **`tests/test_fixture.py`** — Loads and validates all JSONL fixtures and
-  verifies the current extraction stub response.
+  verifies the API returns the matching fixture labels in mock mode.
 - **`tests/test_mock_provider.py`** — Tests the mock extraction provider's
   fixture lookup, deep-copy behavior, and fallback response.
 - **`tests/extraction_test.py`** — Standalone FastAPI health-check prototype
   used during early experimentation.
+- **`tests/test_day7_providers.py`** — Tests provider selection, mock fixture
+  behavior, and safe Gemini failure handling.
