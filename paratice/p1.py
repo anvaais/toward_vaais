@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from app.schemas import ExtractionResponse
 load_dotenv()  # Load environment variables from .env file
 # load_dotenv()
+app = application.Application()
 
 client=genai.Client(api_key=os.getenv("GEMINI_API_KEY", ""))
 
