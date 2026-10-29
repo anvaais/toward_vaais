@@ -27,7 +27,7 @@ class LeadFields(BaseModel):
         return self
 
 
-class ExtractResponse(BaseModel):
+class ExtractionResponse(BaseModel):
     leads: list[LeadFields]
     errors: list[str] = Field(default_factory=list)
     mode: str = "mock"  # "mock" ya "live" tag karne ke liye

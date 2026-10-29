@@ -1,14 +1,14 @@
 import json
 from pydantic import ValidationError
-from app.schemas import LeadFields, ExtractResponse
+from app.schemas import LeadFields, ExtractionResponse
 from app.prompts import EXTRACTION_INSTRUCTIONS
 
 
-def validate_model_output(raw_output: str, inquiry_text: str = "") -> ExtractResponse:
+def validate_model_output(raw_output: str, inquiry_text: str = "") -> ExtractionResponse:
     """Validate the AI model's JSON output before using it."""
     try:
         # Pydantic khud JSON parse karega aur LeadFields + extra="forbid" check karega
-        response = ExtractResponse.model_validate_json(raw_output)
+        response = ExtractionResponse.model_validate_json(raw_output)
 
         # Safety check: Kya source_text waqai original inquiry_text mein maujood hai?
         if inquiry_text:
@@ -23,7 +23,7 @@ def validate_model_output(raw_output: str, inquiry_text: str = "") -> ExtractRes
         raise ValueError(f"Invalid model output: {exc}") from exc
 
 
-def extract_from_inquiry(inquiry_text: str, mode: str = "mock") -> ExtractResponse:
+def extract_from_inquiry(inquiry_text: str, mode: str = "mock") -> ExtractionResponse:
     """Request structured extraction (mock or live) and pass through validation boundary."""
     _prompt = f"{EXTRACTION_INSTRUCTIONS}\n\nInquiry:\n{inquiry_text}"
 

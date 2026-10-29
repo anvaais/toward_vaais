@@ -1,0 +1,42 @@
+[
+    {
+        "id": "1",
+        "destination": "Skardu",
+        "service_type": "guided_tour",
+        "duration_days": 4,
+        "status": "active",
+        "indicative_note": "SYNTHETIC SAMPLE ONLY; not a real offer or quote."
+    },
+    {
+        "id": "2",
+        "destination": "Hunza",
+        "service_type": "cultural_tour",
+        "duration_days": 3,
+        "status": "active",
+        "indicative_note": "SYNTHETIC SAMPLE ONLY; not a real offer or quote."
+    },
+    {
+        "id": "3",
+        "destination": "Gilgit",
+        "service_type": "airport_transfer",
+        "duration_days": 1,
+        "status": "draft",
+        "indicative_note": "SYNTHETIC SAMPLE ONLY; not a real offer or quote."
+    },
+    {
+        "id": "4",
+        "destination": "Khaplu",
+        "service_type": "cultural_tour",
+        "duration_days": 2,
+        "status": "paused",
+        "indicative_note": "SYNTHETIC SAMPLE ONLY; not a real offer or quote."
+    },
+    {
+        "id": "5",
+        "destination": "Fairy Meadows",
+        "service_type": "guided_trek",
+        "duration_days": 5,
+        "status": "active",
+        "indicative_note": "SYNTHETIC SAMPLE ONLY; not a real offer or quote."
+    }
+]
